@@ -40,7 +40,7 @@ class SuperAdminController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect()->route('superadmin.login');
+        return redirect()->route('login');
     }
 
     public function index()
