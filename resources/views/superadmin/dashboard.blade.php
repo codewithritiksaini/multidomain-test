@@ -47,12 +47,12 @@
                 <tbody class="divide-y divide-slate-100">
                     @forelse($admins as $admin)
                         @php
-                            $centralDomain = env('APP_CENTRAL_DOMAIN', 'localhost');
+                            $parentDomain = \App\Http\Middleware\IdentifyTenant::getParentDomain();
                             $scheme = request()->getScheme();
                             $port = request()->getPort();
                             $portStr = ($port && !in_array($port, [80, 443])) ? ":{$port}" : "";
-                            $tenantUrl = "{$scheme}://{$admin->subdomain}.{$centralDomain}{$portStr}";
-                            $tenantAdminUrl = "{$scheme}://{$admin->subdomain}.{$centralDomain}{$portStr}/login";
+                            $tenantUrl = "{$scheme}://{$admin->subdomain}.{$parentDomain}{$portStr}";
+                            $tenantAdminUrl = "{$scheme}://{$admin->subdomain}.{$parentDomain}{$portStr}/login";
                         @endphp
                         <tr class="hover:bg-slate-50/70 transition duration-150">
                             <td class="px-6 py-4 font-mono text-xs text-slate-400">#{{ $admin->id }}</td>
@@ -60,7 +60,7 @@
                             <td class="px-6 py-4 text-slate-600">{{ $admin->email }}</td>
                             <td class="px-6 py-4">
                                 <span class="px-3 py-1 text-xs font-mono font-bold text-indigo-700 bg-indigo-50 border border-indigo-100 rounded-md">
-                                    {{ $admin->subdomain }}.{{ $centralDomain }}
+                                    {{ $admin->subdomain }}.{{ $parentDomain }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 space-x-3">
@@ -81,12 +81,10 @@
                                 </form>
                             </td>
                             <td class="px-6 py-4 text-right space-x-2">
-                                <!-- Edit Button -->
                                 <a href="{{ route('superadmin.admins.edit', $admin->id) }}" class="px-3 py-1.5 text-xs font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200/80 rounded-xl transition duration-150 inline-block">
                                     Edit
                                 </a>
 
-                                <!-- Delete Form -->
                                 <form method="POST" action="{{ route('superadmin.admins.destroy', $admin->id) }}" class="inline" onsubmit="return confirm('Are you sure you want to delete tenant admin [{{ $admin->name }}] and all associated blogs? This cannot be undone.');">
                                     @csrf
                                     @method('DELETE')

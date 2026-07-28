@@ -41,11 +41,11 @@
             <div class="space-y-1.5">
                 <label class="block text-xs font-semibold text-slate-700">Subdomain Identifier</label>
                 <div class="flex items-center gap-2">
-                    <input type="text" name="subdomain" value="{{ old('subdomain') }}" placeholder="e.g. travel" required
+                    <input type="text" name="subdomain" value="{{ old('subdomain') }}" placeholder="e.g. test1" required
                         class="flex-1 px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm font-mono focus:outline-none focus:bg-white focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition duration-150">
-                    <span class="text-xs text-slate-500 font-mono font-bold">.{{ env('APP_CENTRAL_DOMAIN', 'localhost') }}</span>
+                    <span class="text-xs text-slate-500 font-mono font-bold">.{{ \App\Http\Middleware\IdentifyTenant::getParentDomain() }}</span>
                 </div>
-                <p class="text-[11px] text-slate-400">Only lowercase letters, numbers, and dashes (e.g., <code>travel</code>, <code>tech-hub</code>).</p>
+                <p class="text-[11px] text-slate-400">Only lowercase letters, numbers, and dashes (e.g., <code>test1</code>, <code>travel</code>).</p>
             </div>
 
             <div class="pt-4 flex items-center justify-end gap-3 border-t border-slate-100">

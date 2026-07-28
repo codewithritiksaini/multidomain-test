@@ -19,7 +19,7 @@
                 <p class="text-xs text-slate-500 mt-1">Update details, subdomain, status, or password for #{{ $admin->id }}</p>
             </div>
             <span class="px-3 py-1 text-xs font-mono font-bold text-indigo-700 bg-indigo-50 border border-indigo-100 rounded-md">
-                {{ $admin->subdomain }}.{{ env('APP_CENTRAL_DOMAIN', 'localhost') }}
+                {{ $admin->subdomain }}.{{ \App\Http\Middleware\IdentifyTenant::getParentDomain() }}
             </span>
         </div>
 
@@ -44,7 +44,7 @@
                 <div class="flex items-center gap-2">
                     <input type="text" name="subdomain" value="{{ old('subdomain', $admin->subdomain) }}" required
                         class="flex-1 px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm font-mono focus:outline-none focus:bg-white focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition duration-150">
-                    <span class="text-xs text-slate-500 font-mono font-bold">.{{ env('APP_CENTRAL_DOMAIN', 'localhost') }}</span>
+                    <span class="text-xs text-slate-500 font-mono font-bold">.{{ \App\Http\Middleware\IdentifyTenant::getParentDomain() }}</span>
                 </div>
             </div>
 

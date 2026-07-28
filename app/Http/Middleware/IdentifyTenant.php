@@ -9,16 +9,30 @@ use Symfony\Component\HttpFoundation\Response;
 
 class IdentifyTenant
 {
+    public static function getParentDomain(): string
+    {
+        if (env('APP_PARENT_DOMAIN')) {
+            return strtolower(env('APP_PARENT_DOMAIN'));
+        }
+        $central = strtolower(env('APP_CENTRAL_DOMAIN', 'localhost'));
+        $parts = explode('.', $central);
+        if (count($parts) >= 3) {
+            array_shift($parts);
+            return implode('.', $parts);
+        }
+        return $central;
+    }
+
     public function handle(Request $request, Closure $next): Response
     {
         $host = strtolower($request->getHost()); // e.g. "test1.ritiksaini.in" or "multidomain.ritiksaini.in"
         $hostParts = explode('.', $host);
 
-        $centralDomain = strtolower(env('APP_CENTRAL_DOMAIN', 'localhost'));
-        $centralParts = explode('.', $centralDomain);
+        $parentDomain = self::getParentDomain();
+        $parentParts = explode('.', $parentDomain);
 
-        // If host has more subdomain parts than the central domain
-        if (count($hostParts) > count($centralParts)) {
+        // If host has more subdomain parts than the parent domain (e.g. test1.ritiksaini.in vs ritiksaini.in)
+        if (count($hostParts) > count($parentParts)) {
             $subdomain = $hostParts[0];
 
             // Reserved subdomains that belong to Central SuperAdmin System

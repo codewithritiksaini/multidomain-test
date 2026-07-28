@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Http\Middleware\IdentifyTenant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -54,8 +55,30 @@ class SuperAdminController extends Controller
         return view('superadmin.create_admin');
     }
 
+    private function sanitizeSubdomain(string $input): string
+    {
+        $raw = Str::lower(trim($input));
+        $parentDomain = IdentifyTenant::getParentDomain();
+        $centralDomain = strtolower(env('APP_CENTRAL_DOMAIN', 'localhost'));
+
+        // Strip full domain suffix if pasted
+        if (Str::endsWith($raw, '.' . $parentDomain)) {
+            $raw = substr($raw, 0, -strlen('.' . $parentDomain));
+        } elseif (Str::endsWith($raw, '.' . $centralDomain)) {
+            $raw = substr($raw, 0, -strlen('.' . $centralDomain));
+        }
+
+        // Extract clean subdomain prefix
+        $parts = explode('.', $raw);
+        return Str::slug($parts[0]);
+    }
+
     public function storeAdmin(Request $request)
     {
+        $request->merge([
+            'subdomain' => $this->sanitizeSubdomain($request->subdomain ?? '')
+        ]);
+
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
@@ -63,7 +86,7 @@ class SuperAdminController extends Controller
             'subdomain' => 'required|alpha_dash|max:50|unique:users,subdomain',
         ]);
 
-        $subdomain = Str::lower($request->subdomain);
+        $subdomain = $request->subdomain;
 
         User::create([
             'name' => $request->name,
@@ -74,11 +97,11 @@ class SuperAdminController extends Controller
             'is_active' => true,
         ]);
 
-        $centralDomain = env('APP_CENTRAL_DOMAIN', 'localhost');
+        $parentDomain = IdentifyTenant::getParentDomain();
         $scheme = $request->getScheme();
         $port = $request->getPort();
         $portStr = ($port && !in_array($port, [80, 443])) ? ":{$port}" : "";
-        $tenantUrl = "{$scheme}://{$subdomain}.{$centralDomain}{$portStr}";
+        $tenantUrl = "{$scheme}://{$subdomain}.{$parentDomain}{$portStr}";
 
         return redirect()->route('superadmin.dashboard')
             ->with('success', "Tenant Admin created successfully! Subdomain: [{$subdomain}]. Tenant URL: {$tenantUrl}");
@@ -94,6 +117,10 @@ class SuperAdminController extends Controller
     {
         $admin = User::where('role', 'admin')->findOrFail($id);
 
+        $request->merge([
+            'subdomain' => $this->sanitizeSubdomain($request->subdomain ?? '')
+        ]);
+
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $admin->id,
@@ -102,7 +129,7 @@ class SuperAdminController extends Controller
             'is_active' => 'required|boolean',
         ]);
 
-        $subdomain = Str::lower($request->subdomain);
+        $subdomain = $request->subdomain;
 
         $data = [
             'name' => $request->name,

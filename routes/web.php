@@ -4,19 +4,20 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\TenantAdminController;
 use App\Http\Controllers\PublicBlogController;
+use App\Http\Middleware\IdentifyTenant;
 
-$centralDomain = env('APP_CENTRAL_DOMAIN', 'localhost');
+$parentDomain = IdentifyTenant::getParentDomain();
 
 // =========================================================================
-// 1. TENANT / SUBDOMAIN ROUTES ({subdomain}.yourdomain.com)
+// 1. TENANT / SUBDOMAIN ROUTES ({subdomain}.ritiksaini.in or {subdomain}.localhost)
 // =========================================================================
-Route::domain('{subdomain}.' . $centralDomain)->middleware(['identify.tenant'])->group(function () {
+Route::domain('{subdomain}.' . $parentDomain)->middleware(['identify.tenant'])->group(function () {
 
-    // A. Public Blog Frontend
+    // A. Public Blog Frontend (Shows only this subdomain's blogs)
     Route::get('/', [PublicBlogController::class, 'index'])->name('tenant.public.home');
     Route::get('/blog/{slug}', [PublicBlogController::class, 'show'])->name('tenant.public.single');
 
-    // B. Tenant Admin Login (http://{subdomain}.yourdomain.com/login)
+    // B. Tenant Admin Login (http://{subdomain}.ritiksaini.in/login)
     Route::get('/login', [TenantAdminController::class, 'showLoginForm'])->name('tenant.login');
     Route::post('/login', [TenantAdminController::class, 'login']);
     Route::post('/logout', [TenantAdminController::class, 'logout'])->name('tenant.admin.logout');
@@ -30,7 +31,7 @@ Route::domain('{subdomain}.' . $centralDomain)->middleware(['identify.tenant'])-
 });
 
 // =========================================================================
-// 2. CENTRAL / SUPERADMIN ROUTES (Direct Main Domain: yourdomain.com, localhost, 127.0.0.1)
+// 2. CENTRAL / SUPERADMIN ROUTES (Direct Main Domain: multidomain.ritiksaini.in, localhost, 127.0.0.1)
 // =========================================================================
 Route::get('/', [SuperAdminController::class, 'showLoginForm'])->name('central.home');
 Route::get('/login', [SuperAdminController::class, 'showLoginForm'])->name('login');
