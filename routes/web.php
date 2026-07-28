@@ -35,7 +35,7 @@ Route::domain('{subdomain}.' . $centralDomain)->middleware(['identify.tenant'])-
 // 2. CENTRAL / SUPERADMIN ROUTES (Applies to localhost, 127.0.0.1 & admin.localhost)
 // =========================================================================
 Route::get('/', [SuperAdminController::class, 'showLoginForm'])->name('central.home');
-Route::get('/login', [SuperAdminController::class, 'showLoginForm'])->name('superadmin.login');
+Route::get('/login', [SuperAdminController::class, 'showLoginForm'])->name('login')->name('superadmin.login');
 Route::post('/login', [SuperAdminController::class, 'login']);
 Route::post('/logout', [SuperAdminController::class, 'logout'])->name('superadmin.logout');
 

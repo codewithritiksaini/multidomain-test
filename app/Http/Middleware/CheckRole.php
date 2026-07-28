@@ -12,7 +12,11 @@ class CheckRole
     public function handle(Request $request, Closure $next, string $role): Response
     {
         if (!Auth::check()) {
-            return redirect()->guest(route('superadmin.login'));
+            if ($role === 'admin' && app()->bound('currentTenant')) {
+                $tenant = app('currentTenant');
+                return redirect()->guest(route('tenant.admin.login', ['subdomain' => $tenant->subdomain]));
+            }
+            return redirect()->guest(route('login'));
         }
 
         if (Auth::user()->role !== $role) {
