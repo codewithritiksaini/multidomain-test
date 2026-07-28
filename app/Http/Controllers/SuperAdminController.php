@@ -83,4 +83,62 @@ class SuperAdminController extends Controller
         return redirect()->route('superadmin.dashboard')
             ->with('success', "Tenant Admin created successfully! Subdomain: [{$subdomain}]. Tenant URL: {$tenantUrl}");
     }
+
+    public function editAdmin($id)
+    {
+        $admin = User::where('role', 'admin')->findOrFail($id);
+        return view('superadmin.edit_admin', compact('admin'));
+    }
+
+    public function updateAdmin(Request $request, $id)
+    {
+        $admin = User::where('role', 'admin')->findOrFail($id);
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $admin->id,
+            'subdomain' => 'required|alpha_dash|max:50|unique:users,subdomain,' . $admin->id,
+            'password' => 'nullable|min:6',
+            'is_active' => 'required|boolean',
+        ]);
+
+        $subdomain = Str::lower($request->subdomain);
+
+        $data = [
+            'name' => $request->name,
+            'email' => $request->email,
+            'subdomain' => $subdomain,
+            'is_active' => (bool)$request->is_active,
+        ];
+
+        if ($request->filled('password')) {
+            $data['password'] = Hash::make($request->password);
+        }
+
+        $admin->update($data);
+
+        return redirect()->route('superadmin.dashboard')
+            ->with('success', "Tenant Admin [{$admin->name}] updated successfully!");
+    }
+
+    public function toggleAdminStatus($id)
+    {
+        $admin = User::where('role', 'admin')->findOrFail($id);
+        $admin->update(['is_active' => !$admin->is_active]);
+
+        $statusText = $admin->is_active ? 'activated' : 'deactivated';
+
+        return redirect()->route('superadmin.dashboard')
+            ->with('success', "Tenant Subdomain [{$admin->subdomain}] {$statusText} successfully!");
+    }
+
+    public function destroyAdmin($id)
+    {
+        $admin = User::where('role', 'admin')->findOrFail($id);
+        $subdomain = $admin->subdomain;
+        $admin->delete();
+
+        return redirect()->route('superadmin.dashboard')
+            ->with('success', "Tenant Admin and Subdomain [{$subdomain}] deleted successfully!");
+    }
 }

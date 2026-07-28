@@ -12,7 +12,7 @@ $centralDomain = env('APP_CENTRAL_DOMAIN', 'localhost');
 // =========================================================================
 Route::domain('{subdomain}.' . $centralDomain)->middleware(['identify.tenant'])->group(function () {
 
-    // A. Public Blog Frontend (Shows only this subdomain's blogs)
+    // A. Public Blog Frontend
     Route::get('/', [PublicBlogController::class, 'index'])->name('tenant.public.home');
     Route::get('/blog/{slug}', [PublicBlogController::class, 'show'])->name('tenant.public.single');
 
@@ -41,4 +41,8 @@ Route::middleware(['auth', 'role:superadmin'])->group(function () {
     Route::get('/dashboard', [SuperAdminController::class, 'index'])->name('superadmin.dashboard');
     Route::get('/admins/create', [SuperAdminController::class, 'createAdmin'])->name('superadmin.admins.create');
     Route::post('/admins', [SuperAdminController::class, 'storeAdmin'])->name('superadmin.admins.store');
+    Route::get('/admins/{id}/edit', [SuperAdminController::class, 'editAdmin'])->name('superadmin.admins.edit');
+    Route::put('/admins/{id}', [SuperAdminController::class, 'updateAdmin'])->name('superadmin.admins.update');
+    Route::patch('/admins/{id}/toggle-status', [SuperAdminController::class, 'toggleAdminStatus'])->name('superadmin.admins.toggle-status');
+    Route::delete('/admins/{id}', [SuperAdminController::class, 'destroyAdmin'])->name('superadmin.admins.destroy');
 });

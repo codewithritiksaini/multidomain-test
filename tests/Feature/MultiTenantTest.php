@@ -55,6 +55,96 @@ class MultiTenantTest extends TestCase
         ]);
     }
 
+    public function test_superadmin_can_edit_and_update_tenant_admin()
+    {
+        $superadmin = User::create([
+            'name' => 'Super Admin',
+            'email' => 'admin@example.com',
+            'password' => Hash::make('password'),
+            'role' => 'superadmin',
+        ]);
+
+        $tenant = User::create([
+            'name' => 'Old Name',
+            'email' => 'old@example.com',
+            'password' => Hash::make('password'),
+            'role' => 'admin',
+            'subdomain' => 'oldsubdomain',
+            'is_active' => true,
+        ]);
+
+        $response = $this->actingAs($superadmin)
+            ->put("http://localhost/admins/{$tenant->id}", [
+                'name' => 'Updated Name',
+                'email' => 'new@example.com',
+                'subdomain' => 'newsubdomain',
+                'is_active' => 1,
+            ]);
+
+        $response->assertRedirect(route('superadmin.dashboard'));
+        $this->assertDatabaseHas('users', [
+            'id' => $tenant->id,
+            'name' => 'Updated Name',
+            'email' => 'new@example.com',
+            'subdomain' => 'newsubdomain',
+        ]);
+    }
+
+    public function test_superadmin_can_toggle_tenant_admin_status()
+    {
+        $superadmin = User::create([
+            'name' => 'Super Admin',
+            'email' => 'admin@example.com',
+            'password' => Hash::make('password'),
+            'role' => 'superadmin',
+        ]);
+
+        $tenant = User::create([
+            'name' => 'Tech Admin',
+            'email' => 'tech@example.com',
+            'password' => Hash::make('password'),
+            'role' => 'admin',
+            'subdomain' => 'tech',
+            'is_active' => true,
+        ]);
+
+        $response = $this->actingAs($superadmin)
+            ->patch("http://localhost/admins/{$tenant->id}/toggle-status");
+
+        $response->assertRedirect(route('superadmin.dashboard'));
+        $this->assertDatabaseHas('users', [
+            'id' => $tenant->id,
+            'is_active' => false,
+        ]);
+    }
+
+    public function test_superadmin_can_delete_tenant_admin()
+    {
+        $superadmin = User::create([
+            'name' => 'Super Admin',
+            'email' => 'admin@example.com',
+            'password' => Hash::make('password'),
+            'role' => 'superadmin',
+        ]);
+
+        $tenant = User::create([
+            'name' => 'Delete Me',
+            'email' => 'deleteme@example.com',
+            'password' => Hash::make('password'),
+            'role' => 'admin',
+            'subdomain' => 'deleteme',
+            'is_active' => true,
+        ]);
+
+        $response = $this->actingAs($superadmin)
+            ->delete("http://localhost/admins/{$tenant->id}");
+
+        $response->assertRedirect(route('superadmin.dashboard'));
+        $this->assertDatabaseMissing('users', [
+            'id' => $tenant->id,
+        ]);
+    }
+
     public function test_tenant_subdomain_displays_only_its_own_blogs()
     {
         $techAdmin = User::create([
