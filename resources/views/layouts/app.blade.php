@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Laravel 13 Multi-Tenant Blog')</title>
-    <!-- Tailwind CSS CDN -->
+
+    <!-- Vite Assets (Tailwind CSS v4) -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <!-- Tailwind CSS Fallback CDN for instant dev view without running Vite -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

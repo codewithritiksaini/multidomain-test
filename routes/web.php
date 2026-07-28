@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\TenantAdminController;
 use App\Http\Controllers\PublicBlogController;
-use App\Models\User;
 
 $centralDomain = env('APP_CENTRAL_DOMAIN', 'localhost');
 
@@ -12,6 +11,7 @@ $centralDomain = env('APP_CENTRAL_DOMAIN', 'localhost');
 // 1. SUPERADMIN ROUTES (e.g. admin.localhost or admin.yourdomain.com)
 // =========================================================================
 Route::domain('admin.' . $centralDomain)->group(function () {
+    Route::get('/', [SuperAdminController::class, 'showLoginForm']);
     Route::get('/login', [SuperAdminController::class, 'showLoginForm'])->name('superadmin.login');
     Route::post('/login', [SuperAdminController::class, 'login']);
     Route::post('/logout', [SuperAdminController::class, 'logout'])->name('superadmin.logout');
@@ -34,6 +34,7 @@ Route::domain('{subdomain}.' . $centralDomain)->middleware(['identify.tenant'])-
 
     // B. Tenant Admin Panel
     Route::prefix('admin')->group(function () {
+        Route::get('/', [TenantAdminController::class, 'showLoginForm']);
         Route::get('/login', [TenantAdminController::class, 'showLoginForm'])->name('tenant.admin.login');
         Route::post('/login', [TenantAdminController::class, 'login']);
         Route::post('/logout', [TenantAdminController::class, 'logout'])->name('tenant.admin.logout');
@@ -47,9 +48,6 @@ Route::domain('{subdomain}.' . $centralDomain)->middleware(['identify.tenant'])-
 });
 
 // =========================================================================
-// 3. CENTRAL MAIN DOMAIN ROUTE (e.g. http://localhost:8000 or yourdomain.com)
+// 3. CENTRAL MAIN DOMAIN ROUTE (e.g. http://localhost:8000) -> Direct SuperAdmin Login
 // =========================================================================
-Route::get('/', function () use ($centralDomain) {
-    $tenants = User::where('role', 'admin')->where('is_active', true)->latest()->get();
-    return view('welcome', compact('tenants', 'centralDomain'));
-})->name('central.home');
+Route::get('/', [SuperAdminController::class, 'showLoginForm'])->name('central.home');

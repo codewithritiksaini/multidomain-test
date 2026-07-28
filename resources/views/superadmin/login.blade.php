@@ -1,20 +1,14 @@
 @extends('layouts.app')
 
 @section('title', 'SuperAdmin Login')
-@section('brand', 'SuperAdmin Portal')
-
-@section('nav_links')
-    <a href="http://{{ env('APP_CENTRAL_DOMAIN', 'localhost') }}:8000" class="text-xs text-slate-400 hover:text-white transition">
-        &larr; Back to Central Portal
-    </a>
-@endsection
+@section('brand', 'Admin Portal')
 
 @section('content')
 <div class="max-w-md mx-auto py-12">
     <div class="bg-slate-950 border border-slate-800 rounded-2xl p-8 space-y-6 shadow-2xl">
         <div class="text-center space-y-2">
-            <h2 class="text-2xl font-extrabold text-white">SuperAdmin Portal Login</h2>
-            <p class="text-xs text-slate-400">Log in to register and manage tenant subdomains</p>
+            <h2 class="text-2xl font-extrabold text-white">SuperAdmin Portal</h2>
+            <p class="text-xs text-slate-400">Sign in to manage system administrators and subdomains</p>
         </div>
 
         <form method="POST" action="{{ route('superadmin.login') }}" class="space-y-4">
