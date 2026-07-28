@@ -21,12 +21,12 @@ class MultiTenantTest extends TestCase
             'role' => 'superadmin',
         ]);
 
-        $response = $this->post('http://admin.localhost/login', [
+        $response = $this->post('http://localhost/login', [
             'email' => 'admin@example.com',
             'password' => 'password',
         ]);
 
-        $response->assertRedirect('http://admin.localhost/dashboard');
+        $response->assertRedirect('http://localhost/dashboard');
         $this->assertAuthenticatedAs($superadmin);
     }
 
@@ -40,7 +40,7 @@ class MultiTenantTest extends TestCase
         ]);
 
         $response = $this->actingAs($superadmin)
-            ->post('http://admin.localhost/admins', [
+            ->post('http://localhost/admins', [
                 'name' => 'Travel Admin',
                 'email' => 'travel@example.com',
                 'password' => 'password',
