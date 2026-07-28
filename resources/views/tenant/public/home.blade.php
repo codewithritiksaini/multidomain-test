@@ -4,11 +4,8 @@
 @section('brand', $tenant->name)
 
 @section('nav_links')
-    <a href="http://{{ env('APP_CENTRAL_DOMAIN', 'localhost') }}:8000" class="text-xs text-slate-400 hover:text-white transition">
-        &larr; Central Directory
-    </a>
-    <a href="{{ route('tenant.admin.login', ['subdomain' => $tenant->subdomain]) }}" class="px-3 py-1.5 text-xs font-semibold text-indigo-400 bg-indigo-500/10 hover:bg-indigo-500/20 rounded-lg transition">
-        Admin Panel
+    <a href="{{ route('tenant.login', ['subdomain' => $tenant->subdomain]) }}" class="px-4 py-2 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition shadow-lg shadow-indigo-600/20">
+        Admin Login
     </a>
 @endsection
 
@@ -23,7 +20,7 @@
             {{ $tenant->name }}
         </h1>
         <p class="text-slate-400 text-sm">
-            Welcome to the isolated subdomain publication. All content rendered here belongs strictly to {{ $tenant->name }}.
+            Welcome to {{ $tenant->name }}'s official publication space.
         </p>
     </div>
 
@@ -32,8 +29,11 @@
         <h2 class="text-xl font-bold text-white border-b border-slate-800 pb-3">Latest Articles</h2>
 
         @if($blogs->isEmpty())
-            <div class="p-8 text-center border border-dashed border-slate-800 rounded-2xl">
-                <p class="text-slate-500 text-sm">No published articles yet for {{ $tenant->name }}.</p>
+            <div class="p-12 text-center border border-dashed border-slate-800 rounded-2xl bg-slate-950/50">
+                <p class="text-slate-400 text-sm mb-3">No published articles yet for {{ $tenant->name }}.</p>
+                <a href="{{ route('tenant.login', ['subdomain' => $tenant->subdomain]) }}" class="inline-block px-4 py-2 text-xs font-semibold text-indigo-400 hover:text-white transition">
+                    Log in as Tenant Admin to publish the first blog post &rarr;
+                </a>
             </div>
         @else
             <div class="space-y-4">
