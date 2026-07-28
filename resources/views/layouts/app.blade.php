@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Laravel Multi-Tenant Blog')</title>
+    <title>@yield('title', 'Publication')</title>
 
     <!-- Vite Assets (Tailwind CSS v4) -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -12,24 +12,24 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', 'Inter', sans-serif; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900 antialiased min-h-screen flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
+<body class="bg-slate-50/60 text-slate-900 antialiased min-h-screen flex flex-col justify-between selection:bg-slate-900 selection:text-white">
 
     <!-- Header Navigation -->
-    <header class="border-b border-slate-200/80 bg-white/90 backdrop-blur-md sticky top-0 z-50 shadow-xs">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <header class="border-b border-slate-200/80 bg-white/90 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <!-- Logo / Brand -->
                 <div class="flex items-center space-x-3">
-                    <div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-violet-600 flex items-center justify-center font-extrabold text-xl text-white shadow-md shadow-indigo-500/20">
-                        L
+                    <div class="h-9 w-9 rounded-xl bg-slate-900 flex items-center justify-center font-extrabold text-lg text-white shadow-sm">
+                        @yield('brand_icon', 'P')
                     </div>
                     <span class="font-bold text-lg tracking-tight text-slate-900">
-                        @yield('brand', 'MultiTenant SaaS')
+                        @yield('brand', 'Publication')
                     </span>
                 </div>
 
@@ -42,7 +42,7 @@
     </header>
 
     <!-- Main Content Container -->
-    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10">
         @if(session('success'))
             <div class="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm flex items-center justify-between shadow-xs">
                 <div class="flex items-center space-x-2">
@@ -67,8 +67,15 @@
     </main>
 
     <!-- Footer -->
-    <footer class="border-t border-slate-200 bg-white py-6 text-center text-xs text-slate-500">
-        <p>&copy; {{ date('Y') }} Laravel Dynamic Subdomain System. All rights reserved.</p>
+    <footer class="border-t border-slate-200 bg-white py-8 text-center text-xs text-slate-500">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p>&copy; {{ date('Y') }} @yield('brand', 'Publication'). Powered by Multi-Tenant Subdomain System.</p>
+            <div class="flex items-center space-x-4 text-slate-400">
+                <span>Privacy</span>
+                <span>•</span>
+                <span>Terms</span>
+            </div>
+        </div>
     </footer>
 
 </body>
