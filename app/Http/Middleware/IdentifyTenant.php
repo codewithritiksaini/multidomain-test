@@ -11,18 +11,20 @@ class IdentifyTenant
 {
     public function handle(Request $request, Closure $next): Response
     {
-        $host = $request->getHost(); // e.g., "tech.localhost" or "tech.yourdomain.com"
-        $hostParts = explode('.', strtolower($host));
+        $host = strtolower($request->getHost()); // e.g. "test1.ritiksaini.in" or "multidomain.ritiksaini.in"
+        $hostParts = explode('.', $host);
 
-        $centralDomain = env('APP_CENTRAL_DOMAIN', 'localhost');
-        $centralParts = explode('.', strtolower($centralDomain));
+        $centralDomain = strtolower(env('APP_CENTRAL_DOMAIN', 'localhost'));
+        $centralParts = explode('.', $centralDomain);
 
-        // If host has extra subdomain prefix (e.g. tech.localhost vs localhost, or tech.domain.com vs domain.com)
+        // If host has more subdomain parts than the central domain
         if (count($hostParts) > count($centralParts)) {
             $subdomain = $hostParts[0];
 
-            // Skip tenant check for 'admin' (SuperAdmin reserved domain) or 'www'
-            if (!in_array($subdomain, ['admin', 'www'])) {
+            // Reserved subdomains that belong to Central SuperAdmin System
+            $reserved = array_filter(array_map('trim', explode(',', env('RESERVED_SUBDOMAINS', 'multidomain,admin,www,app'))));
+
+            if (!in_array($subdomain, $reserved)) {
                 $tenant = User::where('subdomain', $subdomain)
                               ->where('role', 'admin')
                               ->where('is_active', true)
