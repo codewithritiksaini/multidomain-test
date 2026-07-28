@@ -8,23 +8,7 @@ use App\Http\Controllers\PublicBlogController;
 $centralDomain = env('APP_CENTRAL_DOMAIN', 'localhost');
 
 // =========================================================================
-// 1. SUPERADMIN ROUTES (e.g. admin.localhost or admin.yourdomain.com)
-// =========================================================================
-Route::domain('admin.' . $centralDomain)->group(function () {
-    Route::get('/', [SuperAdminController::class, 'showLoginForm']);
-    Route::get('/login', [SuperAdminController::class, 'showLoginForm'])->name('superadmin.login');
-    Route::post('/login', [SuperAdminController::class, 'login']);
-    Route::post('/logout', [SuperAdminController::class, 'logout'])->name('superadmin.logout');
-
-    Route::middleware(['auth', 'role:superadmin'])->group(function () {
-        Route::get('/dashboard', [SuperAdminController::class, 'index'])->name('superadmin.dashboard');
-        Route::get('/admins/create', [SuperAdminController::class, 'createAdmin'])->name('superadmin.admins.create');
-        Route::post('/admins', [SuperAdminController::class, 'storeAdmin'])->name('superadmin.admins.store');
-    });
-});
-
-// =========================================================================
-// 2. TENANT / SUBDOMAIN ROUTES ({subdomain}.localhost or {subdomain}.yourdomain.com)
+// 1. TENANT / SUBDOMAIN ROUTES ({subdomain}.localhost or {subdomain}.yourdomain.com)
 // =========================================================================
 Route::domain('{subdomain}.' . $centralDomain)->middleware(['identify.tenant'])->group(function () {
 
@@ -48,6 +32,15 @@ Route::domain('{subdomain}.' . $centralDomain)->middleware(['identify.tenant'])-
 });
 
 // =========================================================================
-// 3. CENTRAL MAIN DOMAIN ROUTE (e.g. http://localhost:8000) -> Direct SuperAdmin Login
+// 2. CENTRAL / SUPERADMIN ROUTES (Applies to localhost, 127.0.0.1 & admin.localhost)
 // =========================================================================
 Route::get('/', [SuperAdminController::class, 'showLoginForm'])->name('central.home');
+Route::get('/login', [SuperAdminController::class, 'showLoginForm'])->name('superadmin.login');
+Route::post('/login', [SuperAdminController::class, 'login']);
+Route::post('/logout', [SuperAdminController::class, 'logout'])->name('superadmin.logout');
+
+Route::middleware(['auth', 'role:superadmin'])->group(function () {
+    Route::get('/dashboard', [SuperAdminController::class, 'index'])->name('superadmin.dashboard');
+    Route::get('/admins/create', [SuperAdminController::class, 'createAdmin'])->name('superadmin.admins.create');
+    Route::post('/admins', [SuperAdminController::class, 'storeAdmin'])->name('superadmin.admins.store');
+});
