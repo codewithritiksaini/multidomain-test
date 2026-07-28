@@ -11,7 +11,7 @@
             <p class="text-xs text-slate-400">Sign in to manage system administrators and subdomains</p>
         </div>
 
-        <form method="POST" action="{{ route('superadmin.login') }}" class="space-y-4">
+        <form method="POST" action="/login" class="space-y-4">
             @csrf
 
             <div class="space-y-1">

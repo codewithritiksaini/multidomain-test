@@ -22,7 +22,7 @@
             <p class="text-xs text-slate-400">Manage blog posts for {{ optional($tenant)->name ?? 'this tenant' }}</p>
         </div>
 
-        <form method="POST" action="{{ route('tenant.admin.login', ['subdomain' => optional($tenant)->subdomain]) }}" class="space-y-4">
+        <form method="POST" action="/admin/login" class="space-y-4">
             @csrf
 
             <div class="space-y-1">
