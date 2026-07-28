@@ -4,12 +4,12 @@
 @section('brand', $tenant->name . ' Dashboard')
 
 @section('nav_links')
-    <a href="http://{{ $tenant->subdomain }}.{{ env('APP_CENTRAL_DOMAIN', 'localhost') }}:8000" target="_blank" class="text-xs text-indigo-400 hover:underline">
+    <a href="http://{{ $tenant->subdomain }}.{{ env('APP_CENTRAL_DOMAIN', 'localhost') }}:8000" target="_blank" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800">
         View Public Site &rarr;
     </a>
     <form method="POST" action="{{ route('tenant.admin.logout', ['subdomain' => $tenant->subdomain]) }}" class="inline">
         @csrf
-        <button type="submit" class="px-3 py-1.5 text-xs font-semibold text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 rounded-lg transition">
+        <button type="submit" class="px-3.5 py-1.5 text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200/80 rounded-lg transition duration-150">
             Logout
         </button>
     </form>
@@ -17,26 +17,27 @@
 
 @section('content')
 <div class="space-y-6">
-    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-5">
         <div>
             <div class="flex items-center gap-2">
-                <h1 class="text-2xl font-extrabold text-white">Blog Management</h1>
-                <span class="px-2.5 py-0.5 text-xs font-mono font-bold text-purple-400 bg-purple-500/10 border border-purple-500/20 rounded-md">
+                <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Blog Management</h1>
+                <span class="px-3 py-1 text-xs font-mono font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 rounded-md">
                     {{ $tenant->subdomain }}.{{ env('APP_CENTRAL_DOMAIN', 'localhost') }}
                 </span>
             </div>
-            <p class="text-xs text-slate-400">All posts are isolated to this tenant using Eloquent Global Scope</p>
+            <p class="text-xs text-slate-500 mt-1">All posts are isolated to this tenant using Eloquent Global Scope</p>
         </div>
-        <a href="{{ route('tenant.admin.blogs.create', ['subdomain' => $tenant->subdomain]) }}" class="px-4 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 rounded-xl transition shadow-lg shadow-indigo-600/20">
-            + Create New Blog Post
+        <a href="{{ route('tenant.admin.blogs.create', ['subdomain' => $tenant->subdomain]) }}" class="px-4 py-2.5 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition duration-150 shadow-md shadow-indigo-600/20 inline-flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            Create New Blog Post
         </a>
     </div>
 
     <!-- Blogs Table -->
-    <div class="bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+    <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-sm">
         <div class="overflow-x-auto">
-            <table class="w-full text-left text-sm text-slate-300">
-                <thead class="bg-slate-900 text-xs font-semibold uppercase tracking-wider text-slate-400 border-b border-slate-800">
+            <table class="w-full text-left text-sm text-slate-700">
+                <thead class="bg-slate-50 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200">
                     <tr>
                         <th class="px-6 py-4">ID</th>
                         <th class="px-6 py-4">Title</th>
@@ -46,28 +47,31 @@
                         <th class="px-6 py-4">Action</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-800">
+                <tbody class="divide-y divide-slate-100">
                     @forelse($blogs as $blog)
-                        <tr class="hover:bg-slate-900/50 transition">
-                            <td class="px-6 py-4 font-mono text-xs text-slate-500">#{{ $blog->id }}</td>
-                            <td class="px-6 py-4 font-bold text-white">{{ $blog->title }}</td>
-                            <td class="px-6 py-4 font-mono text-xs text-slate-400">{{ $blog->slug }}</td>
+                        <tr class="hover:bg-slate-50/70 transition duration-150">
+                            <td class="px-6 py-4 font-mono text-xs text-slate-400">#{{ $blog->id }}</td>
+                            <td class="px-6 py-4 font-bold text-slate-900">{{ $blog->title }}</td>
+                            <td class="px-6 py-4 font-mono text-xs text-slate-500">{{ $blog->slug }}</td>
                             <td class="px-6 py-4">
-                                <span class="px-2 py-0.5 text-xs font-bold capitalize {{ $blog->status === 'published' ? 'text-emerald-400 bg-emerald-500/10' : 'text-amber-400 bg-amber-500/10' }} rounded-full">
+                                <span class="px-2.5 py-1 text-xs font-bold capitalize {{ $blog->status === 'published' ? 'text-emerald-700 bg-emerald-50 border border-emerald-200' : 'text-amber-700 bg-amber-50 border border-amber-200' }} rounded-full">
                                     {{ $blog->status }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 text-xs text-slate-400">{{ $blog->created_at->format('M d, Y') }}</td>
+                            <td class="px-6 py-4 text-xs text-slate-500">{{ $blog->created_at->format('M d, Y') }}</td>
                             <td class="px-6 py-4">
-                                <a href="{{ route('tenant.public.single', ['subdomain' => $tenant->subdomain, 'slug' => $blog->slug]) }}" target="_blank" class="text-xs text-indigo-400 hover:underline">
+                                <a href="{{ route('tenant.public.single', ['subdomain' => $tenant->subdomain, 'slug' => $blog->slug]) }}" target="_blank" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 hover:underline">
                                     View Post &rarr;
                                 </a>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-8 text-center text-slate-500 text-sm">
-                                No blog posts found for this tenant. Click "+ Create New Blog Post" to add one!
+                            <td colspan="6" class="px-6 py-12 text-center text-slate-500 text-sm">
+                                <div class="max-w-xs mx-auto space-y-2">
+                                    <p class="font-medium text-slate-700">No blog posts found for this tenant.</p>
+                                    <p class="text-xs text-slate-400">Click "Create New Blog Post" to add your first article.</p>
+                                </div>
                             </td>
                         </tr>
                     @endforelse
