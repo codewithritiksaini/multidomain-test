@@ -75,7 +75,10 @@ class SuperAdminController extends Controller
         ]);
 
         $centralDomain = env('APP_CENTRAL_DOMAIN', 'localhost');
-        $tenantUrl = "http://{$subdomain}.{$centralDomain}:8000";
+        $scheme = $request->getScheme();
+        $port = $request->getPort();
+        $portStr = ($port && !in_array($port, [80, 443])) ? ":{$port}" : "";
+        $tenantUrl = "{$scheme}://{$subdomain}.{$centralDomain}{$portStr}";
 
         return redirect()->route('superadmin.dashboard')
             ->with('success', "Tenant Admin created successfully! Subdomain: [{$subdomain}]. Tenant URL: {$tenantUrl}");

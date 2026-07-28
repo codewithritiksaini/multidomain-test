@@ -47,8 +47,11 @@
                     @forelse($admins as $admin)
                         @php
                             $centralDomain = env('APP_CENTRAL_DOMAIN', 'localhost');
-                            $tenantUrl = "http://{$admin->subdomain}.{$centralDomain}:8000";
-                            $tenantAdminUrl = "http://{$admin->subdomain}.{$centralDomain}:8000/login";
+                            $scheme = request()->getScheme();
+                            $port = request()->getPort();
+                            $portStr = ($port && !in_array($port, [80, 443])) ? ":{$port}" : "";
+                            $tenantUrl = "{$scheme}://{$admin->subdomain}.{$centralDomain}{$portStr}";
+                            $tenantAdminUrl = "{$scheme}://{$admin->subdomain}.{$centralDomain}{$portStr}/login";
                         @endphp
                         <tr class="hover:bg-slate-50/70 transition duration-150">
                             <td class="px-6 py-4 font-mono text-xs text-slate-400">#{{ $admin->id }}</td>

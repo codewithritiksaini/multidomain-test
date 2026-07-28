@@ -5,7 +5,7 @@
 
 @section('nav_links')
     @if($tenant)
-        <a href="http://{{ $tenant->subdomain }}.{{ env('APP_CENTRAL_DOMAIN', 'localhost') }}:8000" class="text-xs font-semibold text-slate-600 hover:text-slate-900 transition">
+        <a href="{{ route('tenant.public.home', ['subdomain' => optional($tenant)->subdomain]) }}" class="text-xs font-semibold text-slate-600 hover:text-slate-900 transition">
             &larr; Back to Blog
         </a>
     @endif

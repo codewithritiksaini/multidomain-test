@@ -5,7 +5,7 @@
 @section('brand_icon', strtoupper(substr($tenant->name, 0, 1)))
 
 @section('nav_links')
-    <a href="http://{{ $tenant->subdomain }}.{{ env('APP_CENTRAL_DOMAIN', 'localhost') }}:8000" target="_blank" class="text-xs font-semibold text-slate-700 hover:text-slate-900">
+    <a href="{{ route('tenant.public.home', ['subdomain' => $tenant->subdomain]) }}" target="_blank" class="text-xs font-semibold text-slate-700 hover:text-slate-900">
         View Public Site &rarr;
     </a>
     <form method="POST" action="{{ route('tenant.admin.logout', ['subdomain' => $tenant->subdomain]) }}" class="inline">
