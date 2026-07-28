@@ -5,7 +5,7 @@
 
 @section('nav_links')
     <a href="{{ route('tenant.login', ['subdomain' => $tenant->subdomain]) }}" class="px-4 py-2 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition shadow-lg shadow-indigo-600/20">
-        Admin Login
+        Login
     </a>
 @endsection
 
@@ -32,7 +32,7 @@
             <div class="p-12 text-center border border-dashed border-slate-800 rounded-2xl bg-slate-950/50">
                 <p class="text-slate-400 text-sm mb-3">No published articles yet for {{ $tenant->name }}.</p>
                 <a href="{{ route('tenant.login', ['subdomain' => $tenant->subdomain]) }}" class="inline-block px-4 py-2 text-xs font-semibold text-indigo-400 hover:text-white transition">
-                    Log in as Tenant Admin to publish the first blog post &rarr;
+                    Log in to publish the first blog post &rarr;
                 </a>
             </div>
         @else

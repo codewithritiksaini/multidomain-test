@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
-@section('title', 'Tenant Admin Login')
-@section('brand', optional($tenant)->name ? $tenant->name . ' Admin' : 'Tenant Admin')
+@section('title', 'Login - ' . optional($tenant)->name)
+@section('brand', optional($tenant)->name ?? 'Login')
 
 @section('nav_links')
     @if($tenant)
         <a href="http://{{ $tenant->subdomain }}.{{ env('APP_CENTRAL_DOMAIN', 'localhost') }}:8000" class="text-xs text-slate-400 hover:text-white transition">
-            &larr; Back to Blog Frontend
+            &larr; Back to Blog
         </a>
     @endif
 @endsection
@@ -18,27 +18,27 @@
             <span class="px-2.5 py-1 text-xs font-mono font-bold text-purple-400 bg-purple-500/10 border border-purple-500/20 rounded-md">
                 {{ optional($tenant)->subdomain }}.{{ env('APP_CENTRAL_DOMAIN', 'localhost') }}
             </span>
-            <h2 class="text-2xl font-extrabold text-white">Tenant Admin Login</h2>
-            <p class="text-xs text-slate-400">Manage blog posts for {{ optional($tenant)->name ?? 'this tenant' }}</p>
+            <h2 class="text-2xl font-extrabold text-white">Login</h2>
+            <p class="text-xs text-slate-400">Sign in to manage {{ optional($tenant)->name ?? 'your account' }}</p>
         </div>
 
-        <form method="POST" action="/admin/login" class="space-y-4">
+        <form method="POST" action="/login" class="space-y-4">
             @csrf
 
             <div class="space-y-1">
-                <label class="block text-xs font-semibold text-slate-300">Tenant Admin Email</label>
-                <input type="email" name="email" value="{{ old('email', optional($tenant)->email ?? 'tech@example.com') }}" required autofocus
+                <label class="block text-xs font-semibold text-slate-300">Email Address</label>
+                <input type="email" name="email" value="{{ old('email') }}" placeholder="Enter your email" required autofocus
                     class="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm focus:outline-none focus:border-indigo-500 transition">
             </div>
 
             <div class="space-y-1">
                 <label class="block text-xs font-semibold text-slate-300">Password</label>
-                <input type="password" name="password" value="password" required
+                <input type="password" name="password" placeholder="Enter your password" required
                     class="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm focus:outline-none focus:border-indigo-500 transition">
             </div>
 
             <button type="submit" class="w-full py-3 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-500 rounded-xl transition shadow-lg shadow-indigo-600/20">
-                Sign In to Tenant Admin
+                Sign In
             </button>
         </form>
     </div>
