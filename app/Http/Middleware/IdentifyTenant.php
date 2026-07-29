@@ -25,7 +25,15 @@ class IdentifyTenant
 
     public static function getReservedSubdomains(): array
     {
-        return array_filter(array_map('trim', explode(',', env('RESERVED_SUBDOMAINS', 'multidomain,admin,www,app'))));
+        $reserved = array_filter(array_map('trim', explode(',', env('RESERVED_SUBDOMAINS', 'multidomain,admin,www,app'))));
+
+        $central = strtolower(env('APP_CENTRAL_DOMAIN', 'localhost'));
+        $parts = explode('.', $central);
+        if (count($parts) >= 3) {
+            $reserved[] = $parts[0];
+        }
+
+        return array_values(array_unique($reserved));
     }
 
     public static function getReservedSubdomainsRegex(): string

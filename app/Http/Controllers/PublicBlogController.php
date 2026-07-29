@@ -10,7 +10,7 @@ class PublicBlogController extends Controller
     public function index()
     {
         if (!app()->bound('currentTenant')) {
-            return redirect()->route('central.home');
+            abort(404, 'Tenant subdomain not found.');
         }
 
         $tenant = app('currentTenant');
@@ -24,7 +24,7 @@ class PublicBlogController extends Controller
     public function show($subdomain, $slug)
     {
         if (!app()->bound('currentTenant')) {
-            return redirect()->route('central.home');
+            abort(404, 'Tenant subdomain not found.');
         }
 
         $tenant = app('currentTenant');
