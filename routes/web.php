@@ -7,11 +7,16 @@ use App\Http\Controllers\PublicBlogController;
 use App\Http\Middleware\IdentifyTenant;
 
 $parentDomain = IdentifyTenant::getParentDomain();
+$reservedRegex = IdentifyTenant::getReservedSubdomainsRegex();
 
 // =========================================================================
 // 1. TENANT / SUBDOMAIN ROUTES ({subdomain}.ritiksaini.in or {subdomain}.localhost)
+//    (Excludes reserved subdomains like 'multidomain', 'admin', 'www', 'app')
 // =========================================================================
-Route::domain('{subdomain}.' . $parentDomain)->middleware(['identify.tenant'])->group(function () {
+Route::domain('{subdomain}.' . $parentDomain)
+    ->where(['subdomain' => $reservedRegex])
+    ->middleware(['identify.tenant'])
+    ->group(function () {
 
     // A. Public Blog Frontend (Shows only this subdomain's blogs)
     Route::get('/', [PublicBlogController::class, 'index'])->name('tenant.public.home');

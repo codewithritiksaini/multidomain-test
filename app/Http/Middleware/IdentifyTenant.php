@@ -23,6 +23,21 @@ class IdentifyTenant
         return $central;
     }
 
+    public static function getReservedSubdomains(): array
+    {
+        return array_filter(array_map('trim', explode(',', env('RESERVED_SUBDOMAINS', 'multidomain,admin,www,app'))));
+    }
+
+    public static function getReservedSubdomainsRegex(): string
+    {
+        $reserved = self::getReservedSubdomains();
+        if (empty($reserved)) {
+            return '.*';
+        }
+        $escaped = array_map('preg_quote', $reserved);
+        return '^(?!(' . implode('|', $escaped) . ')$).*';
+    }
+
     public function handle(Request $request, Closure $next): Response
     {
         $host = strtolower($request->getHost()); // e.g. "test1.ritiksaini.in" or "multidomain.ritiksaini.in"
@@ -31,12 +46,10 @@ class IdentifyTenant
         $parentDomain = self::getParentDomain();
         $parentParts = explode('.', $parentDomain);
 
-        // If host has more subdomain parts than the parent domain (e.g. test1.ritiksaini.in vs ritiksaini.in)
+        // If host has more subdomain parts than the parent domain
         if (count($hostParts) > count($parentParts)) {
             $subdomain = $hostParts[0];
-
-            // Reserved subdomains that belong to Central SuperAdmin System
-            $reserved = array_filter(array_map('trim', explode(',', env('RESERVED_SUBDOMAINS', 'multidomain,admin,www,app'))));
+            $reserved = self::getReservedSubdomains();
 
             if (!in_array($subdomain, $reserved)) {
                 $tenant = User::where('subdomain', $subdomain)
