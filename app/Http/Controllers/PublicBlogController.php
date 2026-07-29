@@ -9,6 +9,10 @@ class PublicBlogController extends Controller
 {
     public function index()
     {
+        if (!app()->bound('currentTenant')) {
+            return redirect()->route('central.home');
+        }
+
         $tenant = app('currentTenant');
 
         // Global scope automatically filters queries to user_id = $tenant->id
@@ -19,6 +23,10 @@ class PublicBlogController extends Controller
 
     public function show($subdomain, $slug)
     {
+        if (!app()->bound('currentTenant')) {
+            return redirect()->route('central.home');
+        }
+
         $tenant = app('currentTenant');
 
         // Global scope automatically filters queries to user_id = $tenant->id
